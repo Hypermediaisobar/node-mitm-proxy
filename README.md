@@ -114,6 +114,35 @@ This will convert _any_ request to show the nodejs.org page.
 
 Remarks: note that we only changed the server where it will connect and the path that it will request, the request will still hold the original request headers, including the Host: original_host header.
 
+### URL overriding
+
+The processor has a chance to override the url that was to be requested to the remote server. By implementing an instance method called **override_request** in the processor, it will be called before establishing a connection to the remote server, allowing to generate custom response without continuing request to the target server.
+
+The override_request will receive an url object (http://nodejs.org/docs/v0.6.2/api/url.html) and expect a boolean to be returned: true if the request was overriden and should not be continued, false if the request should be passed to the target server. 
+
+
+#### Example
+
+This will override _any_ request to show "hello world" plain text response.
+
+    var Proxy = require('mitm-proxy')
+      , url   = require('url');
+
+    var processor = function(proxy) {
+        override_request = function(request, req_url, response, type){
+            var text = "Hello world!";
+            response.writeHead(200, {
+                'Content-Type': 'text/plain',
+                'Content-Length': Buffer.byteLength(text, 'utf8')
+            });
+            response.write(text);
+            response.end();
+            return true;
+        };
+    };
+
+    new Proxy({proxy_port: 8080}, processor);
+
 ### Request intercept
 
 -- todo --
