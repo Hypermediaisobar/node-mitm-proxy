@@ -5,7 +5,7 @@ var Proxy = require('../proxy.js')
 simpleProcessor = function(proxy) {
   var url;
   
-  proxy.on('request', function(request, req_url) {
+  proxy.on('request', function(request, req_url, response) {
     url = req_url;
     console.log("[" + url.hostname + url.pathname + "] - Processor request event, url: " + URL.format(req_url));
   })
@@ -24,4 +24,4 @@ simpleProcessor = function(proxy) {
 };
 
 // Proxy
-new Proxy({proxy_port: 8080, verbose: false}, simpleProcessor);
+new Proxy({proxy_port: 8080, verbose: true}, simpleProcessor);
